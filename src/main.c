@@ -6,7 +6,7 @@
 /*   By: llugez <llugez@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 13:05:28 by llugez            #+#    #+#             */
-/*   Updated: 2026/01/25 15:35:57 by llugez           ###   ########.fr       */
+/*   Updated: 2026/01/30 13:26:15 by llugez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ void	init_data(t_data *data, char *argv[], int argc)
 	data->nb_tube = data->nb_cmd - 1;
 	data->list_cmd = build_list_cmd(data->nb_cmd, argv, 2);
 	data->tube = malloc(data->nb_cmd * sizeof(int [2]));
+	data->fd_out = handle_outfile(data, data->outfile);
 	if (!data->tube)
 		handle_error("Malloc data->tube", data);
 	pipe_tube(data);
@@ -58,8 +59,7 @@ void	init(t_data *data, char *argv[], int argc, char *envp[])
 	data->outfile = argv[argc - 1];
 	data->envp = envp;
 	data->shell = get_shell_path(envp, data);
-    data->get_outfile_perm = 1;
-	data->fd_out = handle_outfile(data, data->outfile);
+	data->get_outfile_perm = 1;
 }
 
 int	main(int argc, char *argv[], char *envp[])
@@ -81,5 +81,4 @@ int	main(int argc, char *argv[], char *envp[])
 		close(data.fd_inf);
 	}
 	close(data.fd_out);
-	clean_all(&act_cmd, &data);
 }

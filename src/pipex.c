@@ -6,7 +6,7 @@
 /*   By: llugez <llugez@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 13:05:37 by llugez            #+#    #+#             */
-/*   Updated: 2026/01/25 15:20:30 by llugez           ###   ########.fr       */
+/*   Updated: 2026/01/30 13:20:28 by llugez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,11 @@ void	execute_command(t_cmd_constructor *act_cmd, t_data *data)
 	act_cmd->path_cmd = get_path_cmd(data->envp, act_cmd->cmd[0]);
 	if (!act_cmd->path_cmd)
 		handle_execve_error(data, act_cmd);
-	execve(act_cmd->path_cmd, act_cmd->cmd, data->envp);
+	if (execve(act_cmd->path_cmd, act_cmd->cmd, data->envp) < 9)
+	{
+		clean_all(act_cmd, data);
+		exit(1);
+	}
 }
 
 void	close_parent_fd(t_data *data)
@@ -48,21 +52,22 @@ void	close_fds(t_data *data, int i)
 	}
 }
 
-void	wait_for_child_pr(t_data *data)
+void	wait_for_child_pr(t_data *data, t_cmd_constructor *act_cmd)
 {
 	int	i;
 	int	status;
 
 	i = 0;
+	close_parent_fd(data);
 	while (i < data->nb_cmd)
 	{
 		waitpid(data->pids[i], &status, 0);
 		if (i == data->nb_cmd - 1)
 		{
-			if (WEXITSTATUS(status) == EXIT_CODE_COMMAND)
-				exit(EXIT_CODE_COMMAND);
+			clean_all(act_cmd, data);
 			if (!data->get_outfile_perm)
 				exit(EXIT_CODE_PERMISSION);
+			exit(WEXITSTATUS(status));
 		}
 		i++;
 	}
@@ -70,9 +75,11 @@ void	wait_for_child_pr(t_data *data)
 
 void	pipex(t_data *data, t_cmd_constructor *act_cmd)
 {
-	int	i;
+	int					i;
+	t_cmd_constructor	*head;
 
 	i = 0;
+	head = act_cmd;
 	while (i < data->nb_cmd)
 	{
 		data->pids[i] = fork();
@@ -92,6 +99,5 @@ void	pipex(t_data *data, t_cmd_constructor *act_cmd)
 		act_cmd = act_cmd->next;
 		i++;
 	}
-	close_parent_fd(data);
-	wait_for_child_pr(data);
+	wait_for_child_pr(data, head);
 }

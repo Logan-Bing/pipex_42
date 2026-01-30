@@ -6,7 +6,7 @@
 /*   By: llugez <llugez@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 13:05:45 by llugez            #+#    #+#             */
-/*   Updated: 2026/01/25 15:20:13 by llugez           ###   ########.fr       */
+/*   Updated: 2026/01/30 13:28:57 by llugez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,9 @@ void				pipe_tube(t_data *data);
 
 // Clear.c
 void				clean_2d_tab(char **tab);
-void				clean_list(t_cmd_constructor **list);
+void				clean_list(t_cmd_constructor *list);
 void				clean_data(t_data *data);
-void				clean_all(t_cmd_constructor **list, t_data *data);
+void				clean_all(t_cmd_constructor *list, t_data *data);
 
 // Utils.c
 char				*prepend_slash(const char *cmd);
@@ -63,6 +63,7 @@ char				**build_list_cmd(int nb_cmd, char *argv[], int start);
 int					handle_outfile(t_data *data, char *outfile_path);
 int					handle_infile(t_data *data, char *infile_path);
 int					handle_tempfile(t_data *data);
+int					handle_outfile_heredoc(t_data *data, char *outfile_path);
 
 // List_utils.c
 t_cmd_constructor	*create_node(char *full_cmd);
@@ -83,7 +84,7 @@ void				handle_execve_error(t_data *data,
 void				close_fds(t_data *data, int i);
 void				execute_command(t_cmd_constructor *act_cmd, t_data *data);
 void				close_parent_fd(t_data *data);
-void				wait_for_child_pr(t_data *data);
+void				wait_for_child_pr(t_data *data, t_cmd_constructor *act_cmd);
 void				pipex(t_data *data, t_cmd_constructor *act_cmd);
 
 // HereDoc.c

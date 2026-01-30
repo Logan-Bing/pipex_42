@@ -6,7 +6,7 @@
 /*   By: llugez <llugez@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 13:07:11 by llugez            #+#    #+#             */
-/*   Updated: 2026/01/14 13:09:00 by llugez           ###   ########.fr       */
+/*   Updated: 2026/01/30 11:40:09 by llugez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,12 @@ void	clean_2d_tab(char **tab)
 	free(tab);
 }
 
-void	clean_list(t_cmd_constructor **list)
+void	clean_list(t_cmd_constructor *list)
 {
 	t_cmd_constructor	*current_node;
 	t_cmd_constructor	*temp;
 
-	current_node = *list;
+	current_node = list;
 	while (current_node->prev)
 		current_node = current_node->prev;
 	while (current_node)
@@ -40,7 +40,7 @@ void	clean_list(t_cmd_constructor **list)
 		free(current_node);
 		current_node = temp;
 	}
-	*list = NULL;
+	list = NULL;
 }
 
 void	clean_data(t_data *data)
@@ -55,7 +55,7 @@ void	clean_data(t_data *data)
 		free(data->shell);
 }
 
-void	clean_all(t_cmd_constructor **list, t_data *data)
+void	clean_all(t_cmd_constructor *list, t_data *data)
 {
 	clean_data(data);
 	clean_list(list);
